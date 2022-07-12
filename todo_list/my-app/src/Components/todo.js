@@ -40,10 +40,10 @@ class Todo extends Component {
                 <div className='tab2'>
                     <label className={this.props.todo.isDone?'linecutted':'linecuttedoff'}>
                         {
-                        this.isInEditMode ? 
+                        this.state.isInEditMode ? 
                             <input
                                 type="text"
-                                defaultValue={this.val}
+                                defaultValue={this.state.val}
                                 onChange={this.handleChange}
                                 onKeyPress={event => event.key === 'Enter' && this.updateComponentValue(this.props.todo.id)}
                             />

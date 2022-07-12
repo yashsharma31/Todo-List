@@ -8,30 +8,14 @@ class Todos extends Component {
         super(props);   
         this.state = {
             addTodoValue: "",
-            todos: [
-            ],
-            filtered: [
-            ],
-            filteredactive:[
-            ],
-            filtersposition:{
-                allf : true,
-                activef : false,
-                completedf : false,
-            },
-            countactive:0
+            todos: [],
+            filterpos:"all"
         }
-        this.lenleftitems = this.lenleftitems.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.handleDone = this.handleDone.bind(this);
         this.addNewTodo = this.addNewTodo.bind(this);
-        this.setUpdate = this.setUpdate.bind(this);  
-        this.checkall = this.checkall.bind(this); 
-        this.uncheckall = this.uncheckall.bind(this); 
-        this.filteractive = this.filteractive.bind(this);
-        this.filternotactive = this.filternotactive.bind(this);
-        this.filterall = this.filterall.bind(this);
-        this.checkforactiv = this.checkforactiv.bind(this);
+        this.setUpdate = this.setUpdate.bind(this);
+        this.clickHandler = this.clickHandler.bind(this);
     } 
 
     //Local helper method to get date
@@ -40,6 +24,22 @@ class Todos extends Component {
         var n = d.getTime();
         return n;
     }
+
+    clickHandler = (pos) => {
+    if (pos === "all") {
+        this.setState({ filterpos: "all" });
+    } 
+    else if (pos === "active") {
+        this.setState({ filterpos: "active" });
+    } 
+    else if (pos === "completed") {
+        this.setState({ filterpos: "completed" });
+    } 
+    else {
+        this.setState({ filterpos: "all" }); 
+    }
+    this.forceUpdate(); 
+    };
 
     //method called from Todo component
     handleDelete = todo => {
@@ -56,64 +56,20 @@ class Todos extends Component {
         });
 
         this.setState({ todos: newList});
-        this.setState({ filtered: newList});
-        this.setState({filteredactive:activelist })
     }
 
-    clearcomplete = todo => {
-        let currentTodos = [];
+    clearcomplete = () => {
         let newList = [];
-        let activelist = [];
-        currentTodos = this.state.todos;
         newList = this.state.todos.filter((t) => {
             return !t.isDone
         });
 
         this.setState({ todos: newList});
-        this.setState({ filtered: newList});
-        this.setState({ filteredactive:newList })
     }
-
-    filteractive = () => {
-        let currentTodos = [];
-        let newList = [];
-        currentTodos = this.state.todos;
-        newList = this.state.todos.filter((t) => {
-            if(t.isDone==true){
-                return t.id 
-            }
-            
-        });
-        this.setState({ filtered: newList });
-    }
-    filternotactive = () => {
-        let currentTodos = [];
-        let newList = [];
-        currentTodos = this.state.todos;
-        newList = this.state.todos.filter((t) => {
-            if(t.isDone==false){
-                return t.id 
-            }
-            
-        });
-        this.setState({ filtered: newList });
-    }
-    filterall = () => {
-        let currentTodos = [];
-        let newList = [];
-        currentTodos = this.state.todos;
-        newList =  this.state.todos.filter((t) => {
-                return t.id 
-            
-        });
-        this.setState({ filtered: newList });
-    }
-
 
     handleDone = todo => {
         let currentTodos = [];
         let newList = [];
-        let activelist = [];
         currentTodos = [...this.state.todos];
         newList = currentTodos.map((t) => {
             if (t.id === todo.id) {
@@ -121,19 +77,14 @@ class Todos extends Component {
             }
             return t;
         });
-        activelist = newList.filter((t) => {
-            return !t.isDone 
-        });
 
-        this.setState({filtered:newList});
-        this.setState({filteredactive:activelist })
+        this.setState({todos:newList});
     }
 
     //method called from AddTodo component
     addNewTodo = value => {
         let currentTodos = [];
         let newList = [];
-        let activelist = [];
         if (value) {
             currentTodos = [...this.state.todos];
             currentTodos.push(
@@ -146,12 +97,7 @@ class Todos extends Component {
             newList =  currentTodos.filter((t) => {
                 return t.id 
         });
-        activelist = newList.filter((t) => {
-            return !t.isDone 
-        });
-            this.setState({ addTodoValue: "", filtered:newList })
             this.setState({ addTodoValue: "", todos:newList })
-            this.setState({ addTodoValue: "", filteredactive:activelist })
         } else {
             console.log("Please Add Todo Text");
         }
@@ -168,69 +114,37 @@ class Todos extends Component {
         this.setState({
             todos:currentTodos
         });
-        this.setState({
-            filtered:currentTodos
-        });
     }}
 
     checkall=()=>{{
         let currentTodos = [];
-        let activelist = [];
         currentTodos = this.state.todos;
         for (const i of currentTodos) {
             i.isDone=true;
           }
-        activelist = currentTodos.filter((t) => {
-            return !t.isDone 
-        });
-        this.setState({
-            filtered:currentTodos
-        });
         this.setState({
             todos:currentTodos
         });
-        this.setState({filteredactive:activelist })
     }}
 
     uncheckall=()=>{{
         let currentTodos = [];
-        let activelist = [];
         currentTodos = this.state.todos;
         for (const i of currentTodos) {
             i.isDone=false;
           }
-        activelist = currentTodos.filter((t) => {
-            return !t.isDone 
-        });
-        this.setState({
-            filtered:currentTodos
-        });
         this.setState({
             todos:currentTodos
         });
-        this.setState({filteredactive:activelist })
     }}
 
-    lenleftitems(){
-        let currentTodos = [];
-        let newList = [];
-        currentTodos = this.state.todos;
-        newList =  this.state.todos.filter((t) => {
-            if(t.isDone==false){
-                return t.id 
-            }
-            
-        });
-        this.setState({ countactive: newList.length });
-        
-    }
-
-
-    checkforactiv(){
+    checkforactiv=()=>{
         let activetodo = [];
         let total_todos= [];
         total_todos = this.state.todos;
-        activetodo = this.state.filteredactive;
+        activetodo =  this.state.todos.filter((t) => {
+            return !t.isDone
+        });
         if (activetodo.length==0 && total_todos.length!=0 ){
                 return true
         }
@@ -238,29 +152,30 @@ class Todos extends Component {
                 return false
         }
     }
-    clicktrue=(sts)=>{{
-        if(sts==1){
-            this.state.filtersposition.allf=true;
-            this.state.filtersposition.activef=false;
-            this.state.filtersposition.completedf=false;
-        }
-        else if(sts==2){
-            this.state.filtersposition.allf=false;
-            this.state.filtersposition.activef=true;
-            this.state.filtersposition.completedf=false;
-        }
-        else{
-            this.state.filtersposition.allf=false;
-            this.state.filtersposition.activef=false;
-            this.state.filtersposition.completedf=true;
-        }
-
-    }}
-
-
 
 
     render() {
+        var activenumber = 0;
+        this.state.todos.forEach((element) => {
+          if (element.isDone === false) {
+            activenumber++; 
+          }
+        });
+
+        var showlist = this.state.todos.filter(function (todo) {
+            switch (this.state.filterpos){
+              case "active": 
+                return !todo.isDone;
+              case "completed": 
+                return todo.isDone;
+              default: 
+                return true;
+            }
+        }, this);
+
+        var positionactive = this.state.filterpos;
+    
+    
         return (
             <div className='table_style'>
             <div className="table">
@@ -272,7 +187,7 @@ class Todos extends Component {
 
                         
                     <div className='footerandtable'>
-                        {this.state.filtered.map((todo, index) => (
+                        {showlist.map((todo, index) => (
                         <div className='todos_table_down' key={todo.id}>
                             <Todo index={index+1} todo={todo} 
                             fooDelete={this.handleDelete} 
@@ -288,26 +203,26 @@ class Todos extends Component {
                     <div className='decor-outer'>
                     <div className='footer'>
                         <div className='left_footer'>
-                        <label>{this.state.filteredactive.length} items left </label>
+                        <label>{activenumber} items left </label>
                         </div>
                         <div className='middle_footer'>
                             <label
-                                className={this.state.filtersposition.allf ? "allbtn" : "allbtn2"}
-                                onClick={() => {this.filterall();this.clicktrue(1)}}
+                                className={positionactive==="all" ? "allbtn" : "allbtn2"}
+                                onClick={() => {this.clickHandler("all")}}
                                 name="all"> All
                             </label>
                             <label
-                                className={this.state.filtersposition.activef ? "allbtn" : "allbtn2"}
-                                onClick={() => {this.filternotactive();this.clicktrue(2)}}
+                                className={positionactive==="active" ? "allbtn" : "allbtn2"}
+                                onClick={() => {this.clickHandler("active")}}
                                 name="pending">Active
                             </label>
                             <label
-                                className={this.state.filtersposition.completedf ? "allbtn" : "allbtn2"}
-                                onClick={() => {this.filteractive();this.clicktrue(3)}}
+                                className={positionactive==="completed" ? "allbtn" : "allbtn2"}
+                                onClick={() => {this.clickHandler("completed")}}
                                 name="completed">Completed
                             </label>
                         </div>
-                        <div className={(this.state.todos.length-this.state.filteredactive.length)>=1 ? "right_footer" : "right_footeroff"}>
+                        <div className={(this.state.todos.length-activenumber)>=1 ? "right_footer" : "right_footeroff"}>
                             <label  onClick={() => this.clearcomplete()}>Clear completed</label>
                         </div>
                     </div>
