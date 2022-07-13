@@ -5,12 +5,9 @@ import drop2 from "../assets/drop2.png"
 
 function AddTodo(props) {
     const [value,setvalue] = useState(props.addTodoValue)
-
-
     const handleChange = (e) => {
         setvalue(e.target.value);
     }
-
     const clearInput = () => {
         document.getElementById("todoValue").value = "";
         setvalue("");
@@ -19,10 +16,6 @@ function AddTodo(props) {
         props.fooAddTodo(value);
         clearInput();
     }
-
-
-    
-    
     return (
         <>
         <div className='outercontainer'>

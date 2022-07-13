@@ -8,16 +8,7 @@ function Todos(props) {
     const [addTodoValue,setaddTodoValue] = useState("")
     const [todos,settodos] = useState([
     ])
-    const [filtered,setfiltered] = useState([
-    ])
-    const [filteredactive,setfilteredactive] = useState([
-        
-    ])
-    const [filtersposition] = useState({
-            allf : true,
-            activef : false,
-            completedf : false,
-    })
+    const [filterpos,setfilterpos] = useState("all")
 
     const getTime= () => {
         let d = new Date();
@@ -25,92 +16,52 @@ function Todos(props) {
         return n;
     }
 
+    const clickHandler = (pos) => {
+        if (pos === "all") {
+            setfilterpos("all");
+        } 
+        else if (pos === "active") {
+            setfilterpos("active");
+        } 
+        else if (pos === "completed") {
+            setfilterpos("completed")
+        } 
+        else {
+            setfilterpos("all");
+        }
+        };
+
+
     const handleDelete = todo => {
-        let currentTodos = [];
         let newList = [];
-        let activelist = [];
-        currentTodos = todos;
         newList = todos.filter((t) => {
             return t.id !== todo
         });
-
-        activelist = newList.filter((t) => {
-            return !t.isDone 
-        });
         settodos(newList)
-        setfiltered(newList)
-        setfilteredactive(activelist)
-
     }
-    const clearcomplete = todo => {
-        let currentTodos = [];
+
+    const clearcomplete = () => {
         let newList = []; 
-        currentTodos = todos;
         newList = todos.filter((t) => {
             return !t.isDone
         });
         settodos(newList)
-        setfiltered(newList)
-        setfilteredactive(newList)
-    }
-    const filteractive = () => {
-        let currentTodos = [];
-        let newList = [];
-        currentTodos = todos;
-        newList = todos.filter((t) => {
-            if(t.isDone==true){
-                return t.id 
-            }
-            
-        });
-        setfiltered(newList)
-    }
-    const filternotactive = () => {
-        let currentTodos = [];
-        let newList = [];
-        currentTodos = todos;
-        newList = todos.filter((t) => {
-            if(t.isDone==false){
-                return t.id 
-            }
-            
-        });
-        setfiltered(newList)
-    }
-    const filterall = () => {
-        let currentTodos = [];
-        let newList = [];
-        currentTodos = todos;
-        newList = todos.filter((t) => {
-                return t.id 
-            
-        });
-        setfiltered(newList)
     }
 
     const handleDone = todo => {
-        let currentTodos = [];
         let newList = [];
-        let activelist = [];
-        currentTodos = [...todos];
-        newList = currentTodos.map((t) => {
+        newList = [...todos].map((t) => {
             if (t.id === todo.id) {
                 t.isDone = !t.isDone;
             }
             return t;
         });
-        activelist = newList.filter((t) => {
-            return !t.isDone 
-        });
-
-        setfiltered(newList)
-        setfilteredactive(activelist)
+        settodos(newList);
     }
 
     const addNewTodo = value => {
         let currentTodos = [];
         let newList = [];
-        let activelist = [];
         if (value) {
             currentTodos = [...todos];
             currentTodos.push(
@@ -120,16 +71,11 @@ function Todos(props) {
                     isDone: false
                 }
             );
-            newList =  currentTodos.filter((t) => {
+        newList =  currentTodos.filter((t) => {
                 return t.id 
-        });
-        activelist = newList.filter((t) => {
-            return !t.isDone 
         });
         setaddTodoValue("")
         settodos(newList)
-        setfiltered(newList)
-        setfilteredactive(activelist)
         } else {
             console.log("Please Add Todo Text");
         }
@@ -142,45 +88,40 @@ function Todos(props) {
             if(t.id==key){
                 t.value=text;
             }
+            return t;
         });
         settodos(currentTodos)
-        setfiltered(currentTodos)
     }}
 
     const checkall=()=>{{
         let currentTodos = [];
-        let activelist = [];
-        currentTodos = todos;
-        for (const i of currentTodos) {
-            i.isDone=true;
-          }
-        activelist = currentTodos.filter((t) => {
-            return !t.isDone 
+        let newList = [];
+        currentTodos = [...todos];
+        newList = currentTodos.map(t =>{
+            t.isDone=true;
+            return t;
         });
-        setfiltered(currentTodos)
-        settodos(currentTodos)
-        setfilteredactive(activelist)
+        settodos(newList)
     }}
     const uncheckall=()=>{{
         let currentTodos = [];
-        let activelist = [];
-        currentTodos = todos;
-        for (const i of currentTodos) {
-            i.isDone=false;
-          }
-        activelist = currentTodos.filter((t) => {
-            return !t.isDone 
+        let newList = [];
+        currentTodos = [...todos];
+        
+        newList = currentTodos.map(t =>{
+            t.isDone=false;
+            return t;
         });
-        setfiltered(currentTodos)
-        settodos(currentTodos)
-        setfilteredactive(activelist)
+        settodos(newList)
     }}
 
     const checkforactiv=()=>{{
         let activetodo = [];
         let total_todos= [];
         total_todos = todos;
-        activetodo = filteredactive;
+        activetodo = todos.filter((t) => {
+            return !t.isDone
+        });
         if (activetodo.length==0 && total_todos.length!=0 ){
                 return true
         }
@@ -188,24 +129,26 @@ function Todos(props) {
                 return false
         }
     }}
-    const clicktrue=(sts)=>{{
-        if(sts==1){
-            filtersposition.allf=true;
-            filtersposition.activef=false;
-            filtersposition.completedf=false;
+
+    var activenumber = 0;
+    todos.forEach((element) => {
+          if (element.isDone === false) {
+            activenumber++; 
+          }
+        });
+
+    var showlist = todos.filter(function (todo) {
+        switch (filterpos){
+            case "active": 
+            return !todo.isDone;
+            case "completed": 
+            return todo.isDone;
+            default: 
+            return true;
         }
-        else if(sts==2){
-            filtersposition.allf=false;
-            filtersposition.activef=true;
-            filtersposition.completedf=false;
-        }
-        else{
-            filtersposition.allf=false;
-            filtersposition.activef=false;
-            filtersposition.completedf=true;
-        }
-    
-    }}
+    }, this);
+
+    var positionactive = filterpos;
 
     
     return (
@@ -219,7 +162,7 @@ function Todos(props) {
 
                 
             <div className='footerandtable'>
-                {filtered.map((todo, index) => (
+                {showlist.map((todo, index) => (
                 <div className='todos_table_down' key={todo.id}>
                     <Todo index={index+1} todo={todo} 
                         fooDelete={handleDelete} 
@@ -234,26 +177,26 @@ function Todos(props) {
                     <div className='decor-outer'>
                     <div className='footer'>
                         <div className='left_footer'>
-                        <label>{filteredactive.length} items left </label>
+                        <label>{activenumber} items left </label>
                         </div>
                         <div className='middle_footer'>
                             <label
-                                className={filtersposition.allf ? "allbtn" : "allbtn2"}
-                                onClick={() => {filterall();clicktrue(1)}}
+                                className={positionactive==="all" ? "allbtn" : "allbtn2"}
+                                onClick={() => {clickHandler("all")}}
                                 name="all"> All
                             </label>
                             <label
-                                className={filtersposition.activef ? "allbtn" : "allbtn2"}
-                                onClick={() => {filternotactive();clicktrue(2)}}
+                                className={positionactive==="active"? "allbtn" : "allbtn2"}
+                                onClick={() => {clickHandler("active")}}
                                 name="pending">Active
                             </label>
                             <label
-                                className={filtersposition.completedf ? "allbtn" : "allbtn2"}
-                                onClick={() => {filteractive();clicktrue(3)}}
+                                className={positionactive==="completed" ? "allbtn" : "allbtn2"}
+                                onClick={() => {clickHandler("completed")}}
                                 name="completed">Completed
                             </label>
                         </div>
-                        <div className={(todos.length-filteredactive.length)>=1 ? "right_footer" : "right_footeroff"}>
+                        <div className={(todos.length-activenumber)>=1 ? "right_footer" : "right_footeroff"}>
                             <label  onClick={() => clearcomplete()}>Clear completed</label>
                         </div>
                     </div>
