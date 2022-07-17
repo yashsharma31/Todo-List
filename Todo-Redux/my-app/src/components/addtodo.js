@@ -29,7 +29,7 @@ const AddTodo = (props) => {
             </p></div>
         <div className="todotaskbar">
             <div className='todotaskbar-imgs'>
-                <img src= {props.chkforactv()?drop2:drop1} onClick={() => {props.chkforactv()?dispatch(uncheckall()):dispatch(checkall())}}></img>
+                <img src= {props.chkforactv()?drop2:drop1} onClick={() => {props.chkforactv()?dispatch(checkall(false)):dispatch(checkall(true))}}></img>
             </div>
             <input type="text" className="formm" id="todoValue" placeholder="What needs to be done?" onChange={handleChange} 
             onKeyPress={event => event.key === 'Enter' && dispatch(addTodo(value)) && clearInput()}

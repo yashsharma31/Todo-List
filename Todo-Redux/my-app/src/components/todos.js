@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import AddTodo from "./addtodo"
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import {filterall,filteractive,filtercompleted,clearcompleted} from "../actions/index";
+import {filterfor,clearcompleted} from "../actions/index";
 import Todo from "./todo"
 import Footer from './footer';
 
@@ -10,16 +10,8 @@ function Todos(props) {
 
     const listdata = useSelector((state)=> state.todoReducers.filteredlist)
     const originallist = useSelector((state)=> state.todoReducers.list)
-    const activelist= useSelector((state)=> state.todoReducers.activelist)
+    const filterposition = useSelector((state)=> state.todoReducers.filterpos)
     const dispatch = useDispatch();
-
-    
-    const [filtersposition] = useState({
-            allf : true,
-            activef : false,
-            completedf : false,
-    })
-
     const checkforactiv=()=>{{
         let activetodo = [];
         let total_todos= [];
@@ -34,26 +26,6 @@ function Todos(props) {
                 return false
         }
     }}
-    const clicktrue=(sts)=>{{
-        if(sts==1){
-            filtersposition.allf=true;
-            filtersposition.activef=false;
-            filtersposition.completedf=false;
-        }
-        else if(sts==2){
-            filtersposition.allf=false;
-            filtersposition.activef=true;
-            filtersposition.completedf=false;
-        }
-        else{
-            filtersposition.allf=false;
-            filtersposition.activef=false;
-            filtersposition.completedf=true;
-        }
-    
-    }}
-
-    
     return (
         <div className='table_style'>
         <div className="table">
@@ -61,9 +33,7 @@ function Todos(props) {
                 <div className="txt1table">
                     <AddTodo chkforactv={checkforactiv}/>
                 </div>
-            </div>
-
-                
+            </div>    
             <div className='footerandtable'>
                 {listdata.map((todo, index) => (
                 <div className='todos_table_down' key={todo.id}>
@@ -80,18 +50,18 @@ function Todos(props) {
                         </div>
                         <div className='middle_footer'>
                             <label
-                                className={filtersposition.allf ? "allbtn" : "allbtn2"}
-                                onClick={() => {dispatch(filterall());clicktrue(1)}}
+                                className={filterposition=="all" ? "allbtn" : "allbtn2"}
+                                onClick={() => {dispatch(filterfor("all"))}}
                                 name="all"> All
                             </label>
                             <label
-                                className={filtersposition.activef ? "allbtn" : "allbtn2"}
-                                onClick={() => {dispatch(filteractive());clicktrue(2)}}
+                                className={filterposition=="active" ? "allbtn" : "allbtn2"}
+                                onClick={() => {dispatch(filterfor("active"))}}
                                 name="pending">Active
                             </label>
                             <label
-                                className={filtersposition.completedf ? "allbtn" : "allbtn2"}
-                                onClick={() => {dispatch(filtercompleted());clicktrue(3)}}
+                                className={filterposition=="completed" ? "allbtn" : "allbtn2"}
+                                onClick={() => {dispatch(filterfor("completed"))}}
                                 name="completed">Completed
                             </label>
                         </div>

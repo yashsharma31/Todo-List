@@ -1,6 +1,6 @@
 export const addTodo = (value) =>{
     return {
-        type :"Add_Todo",
+        type :"add_todo",
         payload:{
             id: new Date().getTime().toString(),
             value:value,
@@ -11,7 +11,7 @@ export const addTodo = (value) =>{
 }
 export const deleteTodo = (id) =>{
     return {
-        type :"Delete_Todo",
+        type :"delete_todo",
         payload:{
             id: id
         }
@@ -20,7 +20,7 @@ export const deleteTodo = (id) =>{
 
 export const updateTodo = (id,value)=>{
     return{
-        type:"Update_Todo",
+        type:"update_todo",
         payload:{
             id:id,
             value:value
@@ -30,43 +30,33 @@ export const updateTodo = (id,value)=>{
 
 export const changetfstate = (id)=>{
     return{
-        type:"Change_tf_state",
+        type:"change_tf_state",
         payload:{
             id:id
         }
     }
 }
 
-export const checkall = () =>{
+export const checkall = (tick) =>{
     return{
-        type:"Check_for_all"
+        type:"check_for_all",
+        payload:{
+            tick:tick
+        }
     }
 }
 
-export const uncheckall = () =>{
+export const filterfor = (ftype) =>{
     return{
-        type:"Uncheck_for_all"
-    }
-}
-
-export const filterall = () =>{
-    return{
-        type:"Filter_All"
-    }
-}
-export const filteractive = () =>{
-    return{
-        type:"Filter_Active"
-    }
-}
-export const filtercompleted = () =>{
-    return{
-        type:"Filter_Completed"
+        type:"filter_for",
+        payload:{
+            ftype:ftype
+        }
     }
 }
 
 export const clearcompleted = () =>{
     return{
-        type:"Clear_Completed"
+        type:"clear_completed"
     }
 }
